@@ -34,15 +34,19 @@ namespace PaymentAPI
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "PaymentAPI", Version = "v1" });
             });
 
-            services.AddDbContext<PaymentDetailContext>(options =>
-            options.UseSqlServer(Configuration.GetConnectionString("DevConnection")));
 
+            // Linha adicionada para ativacao da string de conexao do SQL Server
+            services.AddDbContext<PaymentDetailContext>(options =>
+                 options.UseSqlServer(Configuration.GetConnectionString("DevConnection")));
+
+            // Linha criada para o TwoWay Binding (ou seja, comunicacao de mao dupla, porem, no mesmo dominio)
             services.AddCors();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            // Faz o TwoWay Binding para o endereço da aplicação Angular que está rodando atualmente
             app.UseCors(options =>
             options.WithOrigins("http://localhost:4200")
             .AllowAnyMethod()
@@ -55,7 +59,7 @@ namespace PaymentAPI
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "PaymentAPI v1"));
             }
 
-            app.UseRouting();
+            app.UseRouting(); // Ativa o routing para uso do HTTP
 
             app.UseAuthorization();
 
